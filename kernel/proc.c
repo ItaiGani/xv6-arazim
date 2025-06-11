@@ -621,3 +621,19 @@ void procdump(void) {
         printf("\n");
     }
 }
+
+
+uint64 processes_count(void){
+    uint64 count = 0;
+    struct proc *p = myproc();
+    for (p = proc; p < &proc[NPROC]; p++) {
+        acquire(&p->lock);
+        enum procstate state = p->state;
+        release(&p->lock);
+        if (state == UNUSED)
+            continue;
+        count++;
+        
+    }
+    return count;
+}
