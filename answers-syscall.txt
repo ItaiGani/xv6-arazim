@@ -1,0 +1,20 @@
+The function usertrap at `kernel/trap.c`
+
+The value is 7 and it means the systemcall EXEC as noted in `kernel/syscall.h`
+
+The value of sstatus = 0x200000022
+And the previous mode was machine level.
+
+
+The kernel is panicing at 0x000000008000203c 
+and the command there is `lw a3,0(zero)` which means that num is a3 register.
+
+
+It was initcode and his pid is 1
+
+
+
+To debug run on two terminals:
+on the first run `make qemu-gdb`
+on the second run `gdb-multiarch kernel/kernel`
+
