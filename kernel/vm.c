@@ -285,6 +285,34 @@ freewalk(pagetable_t pagetable)
   }
   kfree((void*)pagetable);
 }
+void print_pte(int i, int d, uint64 pte, uint64 pa){
+  for(int j = 0; j < d; j++){
+    printf(".. ");
+  }
+  printf("..");
+  printf("%d: pte %p pa %p\n", i, pte, pa);
+}
+
+void vmprint_rec(pagetable_t pagetable, int d){
+  // there are 2^9 = 512 PTEs in a page table.
+  for(int i = 0; i < 512; i++){
+    pte_t pte = pagetable[i];
+    if((pte & PTE_V) && (pte & (PTE_R|PTE_W|PTE_X)) == 0){
+      // this PTE points to a lower-level page table.
+      uint64 child = PTE2PA(pte);
+      print_pte(i, d, pte, child);
+      vmprint_rec((pagetable_t)child, d + 1);
+    } else if(pte & PTE_V){
+      uint64 child = PTE2PA(pte);
+      print_pte(i, d, pte, child);
+    }
+  }
+}
+
+void vmprint(pagetable_t pagetable){
+  printf("page table %p\n", pagetable);
+  vmprint_rec(pagetable, 0);
+}
 
 // Free user memory pages,
 // then free page-table pages.
@@ -437,3 +465,4 @@ copyinstr(pagetable_t pagetable, char *dst, uint64 srcva, uint64 max)
     return -1;
   }
 }
+
