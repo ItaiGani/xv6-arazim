@@ -697,3 +697,30 @@ procdump(void)
     printf("\n");
   }
 }
+
+
+int pgaccess(uint64 sva, int length, uint64 mask){
+  printf("\nin pgaccess function\n\n");
+  struct proc *p = myproc();
+  uint64 result = 0;
+  pte_t* pte;
+
+  if (length > 32){
+    printf("length has more than int size, error\n");
+    return -1;
+  }
+  for(int i = 0; i < length; i++){
+    pte = walk(p->pagetable, (sva + PGSIZE * i), 0);
+    printf("iter %d: pte bits = %d\n", i , *pte);
+    if(*pte & PTE_A){
+      result += 1 << i;
+      *pte -= PTE_A;
+    }
+  }
+  if(copyout(p->pagetable, mask, (char *)&result, sizeof(result)) < 0){
+    printf("error in copyout\n");
+    return -1;
+  }
+
+  return 0;
+}

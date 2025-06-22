@@ -74,8 +74,13 @@ sys_sleep(void)
 int
 sys_pgaccess(void)
 {
-  // lab pgtbl: your code here.
-  return 0;
+  uint64 sva, mask;     // sva = starting virtual address
+  int length;
+
+  argaddr(0, &sva);
+  argint(1, &length);
+  argaddr(2, &mask);
+  return pgaccess(sva, length, mask);
 }
 #endif
 
