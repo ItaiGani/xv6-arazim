@@ -36,4 +36,5 @@ int main(int argc, char *argv[]) {
     close(p[0]);
     close(p[1]);
     wait(0);
+    exit(0);
 }
